@@ -1,0 +1,173 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+.app{font-family:var(--font-sans);display:flex;flex-direction:column;height:600px}
+.header{background:#4a2c6e;border-radius:12px 12px 0 0;padding:14px 16px;display:flex;align-items:center;gap:10px}
+.header-icon{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center}
+.header-icon i{color:#fff;font-size:20px}
+.header-text h2{font-size:15px;font-weight:500;color:#fff;margin:0}
+.header-text p{font-size:11px;color:rgba(255,255,255,0.65);margin:0}
+.header-badge{margin-left:auto;font-size:10px;padding:3px 8px;border-radius:20px;background:rgba(255,255,255,0.15);color:#fff}
+.quick-btns{display:flex;gap:6px;padding:10px 12px;flex-wrap:wrap;border-bottom:0.5px solid var(--border);background:var(--surface-1)}
+.qbtn{font-size:11px;padding:4px 10px;border-radius:20px;border:0.5px solid var(--border-strong);background:var(--surface-2);color:var(--text-secondary);cursor:pointer;white-space:nowrap}
+.qbtn:hover{background:#eeedfe;color:#534ab7;border-color:#afa9ec}
+.messages{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:10px;background:var(--surface-0)}
+.msg{display:flex;gap:8px;align-items:flex-start;max-width:92%}
+.msg.user{flex-direction:row-reverse;align-self:flex-end}
+.msg-avatar{width:28px;height:28px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:14px}
+.bot-avatar{background:#4a2c6e}
+.bot-avatar i{color:#fff;font-size:14px}
+.user-avatar{background:#e6f1fb}
+.user-avatar i{color:#185fa5;font-size:14px}
+.bubble{padding:10px 13px;border-radius:12px;font-size:13px;line-height:1.55;max-width:100%}
+.bot-bubble{background:var(--surface-2);border:0.5px solid var(--border);color:var(--text-primary);border-radius:4px 12px 12px 12px}
+.user-bubble{background:#4a2c6e;color:#fff;border-radius:12px 4px 12px 12px}
+.verse-card{background:#eeedfe;border:0.5px solid #afa9ec;border-radius:8px;padding:8px 10px;margin-top:8px;font-size:12px;color:#3c3489;font-style:italic;border-left:3px solid #7f77dd}
+.verse-ref{font-style:normal;font-size:11px;color:#534ab7;font-weight:500;margin-top:4px}
+.typing{display:flex;align-items:center;gap:4px;padding:10px 13px;background:var(--surface-2);border:0.5px solid var(--border);border-radius:4px 12px 12px 12px}
+.dot{width:6px;height:6px;border-radius:50%;background:#7f77dd;animation:bounce 1.2s infinite}
+.dot:nth-child(2){animation-delay:0.2s}
+.dot:nth-child(3){animation-delay:0.4s}
+@keyframes bounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-6px)}}
+.input-area{display:flex;gap:8px;padding:10px 12px;border-top:0.5px solid var(--border);background:var(--surface-2);border-radius:0 0 12px 12px}
+.input-area input{flex:1;font-size:13px;padding:8px 12px;border-radius:20px;border:0.5px solid var(--border-strong);background:var(--surface-1);color:var(--text-primary);outline:none}
+.input-area input:focus{border-color:#7f77dd}
+.send-btn{width:36px;height:36px;border-radius:50%;background:#4a2c6e;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.send-btn:hover{background:#3c3489}
+.send-btn i{color:#fff;font-size:16px}
+</style>
+
+<div class="app">
+  <div class="header">
+    <div class="header-icon"><i class="ti ti-book" aria-hidden="true"></i></div>
+    <div class="header-text">
+      <h2>Bot Bíblico</h2>
+      <p>Reina Valera 1960</p>
+    </div>
+    <span class="header-badge">RV1960</span>
+  </div>
+
+  <div class="quick-btns">
+    <button class="qbtn" onclick="quickAsk('Dame un devocional para hoy')">Devocional del día</button>
+    <button class="qbtn" onclick="quickAsk('Dame una oración de fortaleza')">Oración</button>
+    <button class="qbtn" onclick="quickAsk('¿Qué dice la Biblia sobre el perdón?')">Perdón</button>
+    <button class="qbtn" onclick="quickAsk('¿Qué dice la Biblia sobre la ansiedad?')">Ansiedad</button>
+    <button class="qbtn" onclick="quickAsk('Explícame Juan 3:16')">Juan 3:16</button>
+    <button class="qbtn" onclick="quickAsk('Dame un versículo de esperanza')">Esperanza</button>
+  </div>
+
+  <div class="messages" id="messages">
+    <div class="msg bot">
+      <div class="msg-avatar bot-avatar"><i class="ti ti-book" aria-hidden="true"></i></div>
+      <div class="bot-bubble bubble">
+        Bienvenido. Estoy aquí para acompañarte en tu lectura de la Biblia Reina Valera 1960.<br><br>
+        Puedes preguntarme sobre cualquier pasaje, pedirme una interpretación, un devocional para hoy, o una oración. ¿En qué te puedo ayudar?
+        <div class="verse-card">"Tu palabra es una lámpara a mis pies, y una lumbrera a mi camino."<div class="verse-ref">— Salmos 119:105 RV1960</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="input-area">
+    <input type="text" id="user-input" placeholder="Escribe tu pregunta o pasaje..." onkeydown="if(event.key==='Enter')sendMsg()">
+    <button class="send-btn" onclick="sendMsg()" aria-label="Enviar"><i class="ti ti-send" aria-hidden="true"></i></button>
+  </div>
+</div>
+
+<script>
+const history = [];
+const SYSTEM = `Eres un asistente bíblico experto en la Biblia Reina Valera 1960 (RV1960). Respondes en español con calidez, respeto y profundidad espiritual.
+
+REGLAS:
+- Siempre cita versículos en la versión Reina Valera 1960 exactamente
+- Cuando interpretes un pasaje, da contexto histórico, contexto del libro, y aplicación práctica
+- Para devocionales: incluye un pasaje central, reflexión breve y aplicación para el día
+- Para oraciones: escribe una oración bíblica, cálida y personal
+- Formato de respuesta en JSON:
+{
+  "respuesta": "Tu respuesta principal aquí (puede incluir HTML básico como <br> para saltos de línea)",
+  "versiculo": "Texto exacto del versículo RV1960",
+  "referencia": "Libro capítulo:versículo RV1960"
+}
+- El campo versiculo y referencia son opcionales si no aplica
+- Nunca uses el campo versiculo para versículos ya incluidos en la respuesta principal
+- Sé conciso pero completo. Máximo 150 palabras en la respuesta principal.`;
+
+async function sendMsg(){
+  const input = document.getElementById('user-input');
+  const text = input.value.trim();
+  if(!text) return;
+  input.value = '';
+  addMsg('user', text);
+  showTyping();
+  history.push({role:'user', content: text});
+  try{
+    const resp = await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        model:'claude-sonnet-4-6',
+        max_tokens:1000,
+        system: SYSTEM,
+        messages: history
+      })
+    });
+    const data = await resp.json();
+    const raw = data.content[0].text.replace(/```json|```/g,'').trim();
+    const s = raw.indexOf('{'), e = raw.lastIndexOf('}');
+    const parsed = JSON.parse(raw.slice(s, e+1));
+    history.push({role:'assistant', content: data.content[0].text});
+    hideTyping();
+    addBotMsg(parsed);
+  } catch(err){
+    hideTyping();
+    addMsg('bot-err','Hubo un error. Por favor intenta de nuevo.');
+  }
+}
+
+function quickAsk(text){
+  document.getElementById('user-input').value = text;
+  sendMsg();
+}
+
+function addMsg(type, text){
+  const msgs = document.getElementById('messages');
+  const div = document.createElement('div');
+  if(type==='user'){
+    div.className='msg user';
+    div.innerHTML=`<div class="msg-avatar user-avatar"><i class="ti ti-user" aria-hidden="true"></i></div><div class="user-bubble bubble">${text}</div>`;
+  } else {
+    div.className='msg bot';
+    div.innerHTML=`<div class="msg-avatar bot-avatar"><i class="ti ti-book" aria-hidden="true"></i></div><div class="bot-bubble bubble">${text}</div>`;
+  }
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function addBotMsg(parsed){
+  const msgs = document.getElementById('messages');
+  const div = document.createElement('div');
+  div.className='msg bot';
+  let inner = `<div class="msg-avatar bot-avatar"><i class="ti ti-book" aria-hidden="true"></i></div><div class="bot-bubble bubble">${parsed.respuesta}`;
+  if(parsed.versiculo){
+    inner += `<div class="verse-card">${parsed.versiculo}<div class="verse-ref">— ${parsed.referencia}</div></div>`;
+  }
+  inner += '</div>';
+  div.innerHTML = inner;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function showTyping(){
+  const msgs = document.getElementById('messages');
+  const div = document.createElement('div');
+  div.className='msg bot'; div.id='typing-indicator';
+  div.innerHTML=`<div class="msg-avatar bot-avatar"><i class="ti ti-book" aria-hidden="true"></i></div><div class="typing"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>`;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function hideTyping(){
+  const t = document.getElementById('typing-indicator');
+  if(t) t.remove();
+}
+</script>
