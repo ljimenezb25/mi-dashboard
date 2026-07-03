@@ -103,7 +103,7 @@ async function sendMsg(){
   try{
     const resp = await fetch('https://api.anthropic.com/v1/messages',{
       method:'POST',
-      headers:{'Content-Type':'application/json'},
+      headers:{'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'},
       body: JSON.stringify({
         model:'claude-sonnet-4-6',
         max_tokens:1000,
